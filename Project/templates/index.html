@@ -1,0 +1,23 @@
+{% extends 'App/default.html' %}
+
+
+{% load static %}
+
+
+{% block indexHead %}
+    <title>Silant</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock indexHead %}
+
+
+{% block index %}
+    <div class="image-container">
+        <a href="{% url 'mainPage' %}">
+            <img class="indexLogo" src="{% static 'assets/img/Logotype RGB 1.jpg' %}" alt="indexLogo" title="Click to start" width="50%" height="50%"/>
+        </a>
+    </div>
+    <script src="{% static 'js/index.js' %}"></script>
+
+{% endblock index %}

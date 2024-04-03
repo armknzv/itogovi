@@ -1,0 +1,50 @@
+{% extends 'App/default.html' %}
+
+
+{% load static %}
+
+{% block indexHead %}
+    <title>Создание Элемента таблицы ТО</title>
+{% endblock indexHead %}
+
+
+{% block user %}
+
+<body>
+    <h1>Создание Элемента таблицы ТО:</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <table class="tableVehicles">
+
+            <tr style="background-color: #163E6C">
+                <td style="text-align: center;">{{ form.maintenanceType.label_tag }}</td>
+                <td style="text-align: center;">{{ form.maintenanceDate.label_tag }}</td>
+                <td style="text-align: center;">{{ form.operatingTime.label_tag }}</td>
+                <td style="text-align: center;">{{ form.workOrderNumber.label_tag }}</td>
+                <td style="text-align: center;">{{ form.workOrderDate.label_tag }}</td>
+                <td style="text-align: center;">{{ form.maintenanceCompany.label_tag }}</td>
+                <td style="text-align: center;">{{ form.vehicle.label_tag }}</td>
+                <td style="text-align: center;">{{ form.serviceCompany.label_tag }}</td>
+            </tr>
+
+                <td style="text-align: center;">{{ form.maintenanceType }}</td>
+                <td style="text-align: center;">{{ form.maintenanceDate }}</td>
+                <td style="text-align: center;">{{ form.operatingTime }}</td>
+                <td style="text-align: center;">{{ form.workOrderNumber }}</td>
+                <td style="text-align: center;">{{ form.workOrderDate }}</td>
+                <td style="text-align: center;">{{ form.maintenanceCompany }}</td>
+                <td style="text-align: center;">{{ form.vehicle }}</td>
+                <td style="text-align: center;">{{ form.serviceCompany }}</td>
+            </tr>
+        </table>
+        <div class="tableChangeButtonsContainer" style="margin-top: 20px;">
+            <button class="tableChangeButtons" type="submit">Submit</button>
+        </div>
+    </form>
+    <div class="tableChangeButtonsContainer" style="margin-top: 20px;">
+        <a href="{% url 'maintenancePage' %}"><button class="tableChangeButtons">Cancel</button></a>
+    </div>
+</body>
+</html>
+{% endblock user %}

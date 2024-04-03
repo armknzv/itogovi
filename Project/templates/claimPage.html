@@ -1,0 +1,206 @@
+{% extends 'App/default.html' %}
+
+
+{% load static %}
+
+
+{% block indexHead %}
+    <title>Рекламация</title>
+{% endblock indexHead %}
+
+
+{% block user %}
+    <div class="user">
+       <div>Пользователь: <em>"{{user}}" (Роль: "{{role}}"
+        {% if client_name %}
+        , Клиент: "{{client_name}}"
+        {% endif %}
+        {% if serviceCompany__name %}
+        , Сервисная компания: "{{serviceCompany__name}}"
+        {% endif %}
+        )</em></div>
+       <div>Информация о рекламациях вашей техники</div>
+       <div>
+            <a href="{% url 'mainPage' %}"><button class="tableChangeButtons">Машины</button></a>
+            <a href="{% url 'maintenancePage' %}"><button class="tableChangeButtons">Техническое обслуживание</button></a>
+            <a href="{% url 'claimPage' %}"><button class="tableChangeButtons" style="background-color:#EBE6D6;">Рекламации</button></a>
+
+            {% if request.user.is_authenticated %}
+                {% if not role_error or request.user.is_superuser %}
+                    {% if manager or request.user.is_superuser %}
+                        {% if self.url is claimPage %}
+                            <a href="{% url 'claim_create' %}"><button class="tableChangeButtons">Создать рекламацию</button></a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+       </div>
+    </div>
+
+{% endblock user %}
+
+
+{% block filter %}
+    <div class="filter">
+        <form class="filterForm" method="get" action="{% url 'claimPage' %}">
+
+            <label for="malfunction_node"> Узел отказа: </label>
+            <select name="malfunction_node" id="malfunction_node">
+                <option value="">All</option>
+                {% for model in malfunction_node %}
+                    <option value="{{ model }}" {% if model == filter_malfunction_node %}selected{% endif %}>{{ model }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="reparing_method"> &nbsp;Способ восстановления: </label>
+            <select name="reparing_method" id="reparing_method">
+                <option value="">All</option>
+                {% for model in reparing_method %}
+                    <option value="{{ model }}" {% if model == filter_reparing_method %}selected{% endif %}>{{ model }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="service_company"> &nbsp;Cервисная компания: </label>
+            <select name="service_company" id="service_company">
+                <option value="">All</option>
+                {% for model in service_company %}
+                    <option value="{{ model }}" {% if model == filter_service_company %}selected{% endif %}>{{ model }}</option>
+                {% endfor %}
+            </select>
+
+            &nbsp;<button class="filterButtons" id="buttonApplyFilterMain" type="submit">Применить фильтр</button>
+            &nbsp;<button class="filterButtons" id="resetButtonFilterMain">Сбросить фильтр</button>
+        </form>
+    </div>
+    <div class="user">
+        <div>таблица с данными (выдача результата)</div>
+     </div>
+
+     <div class="vehicleModelRowInfo" >
+        <div class="user" style="padding: 50px 0px 50px 0px;">
+            таблица с данными (выдача результата)<span id="tableName"></span>
+        </div>
+        <table class="tableVehicles" >
+
+            <tr style="background-color: #163E6C">
+                <td style="text-align: center;">id</td>
+                <td style="text-align: center;">Наименование</td>
+                <td style="text-align: center;">Описание</td>
+            </tr>
+
+            <tr>
+                <td class="vehicleModelRowInfo_Id" style="text-align: center;"></td>
+                <td class="vehicleModelRowInfo_Name" style="text-align: center;"></td>
+                <td class="vehicleModelRowInfo_Description" style="text-align: center;"></td>
+            </tr>
+
+        </table>
+        <div class="tableChangeButtonsContainer">
+            <button class="tableChangeButtons" id="closeInfoPanel">Close</button>
+        </div>
+
+    </div>
+{% endblock filter %}
+
+
+{% block mainPage %}
+
+{% if request.user.is_authenticated %}
+    {% if claim %}
+    <div class="mainView">
+        <table class="tableVehicles">
+
+            <tr style="background-color: #163E6C">
+                <td style="text-align: center;">№ записи</td>
+                <td style="text-align: center;">Зав. № машины</td>
+                <td style="text-align: center;">Дата отказа</td>
+                <td style="text-align: center;">Наработка, м/час</td>
+                <td id="malfunctionNodeRowName" style="text-align: center;">Узел отказа</td>
+                <td style="text-align: center;">Описание отказа</td>
+                <td id="reparingMethodRowName" style="text-align: center;">Способ восстановления</td>
+                <td style="text-align: center;">Используемые запасные части</td>
+                <td style="text-align: center;">Дата восстановления</td>
+                <td style="text-align: center;">Время простоя техники, час</td>
+                <td id="serviceCompanyRowName" style="text-align: center;">Сервисная компания</td>
+            </tr>
+
+        {% for claim in page %}
+
+            <tr style="background-color:{% cycle 'white' '#EBE6D6' %}; text-align: center;">
+
+                {% if not role_error or request.user.is_superuser %}
+                    {% if manager or request.user.is_superuser %}
+                        <td style="box-shadow: 1px 1px 1px black;" >
+                            <a href="{% url 'claim_edit' pk=claim.id %}">{{ claim.id }}</a>
+                        </td>
+                    {% else %}
+                        <td>{{ claim.id  }}</td>
+                    {% endif %}
+                {% else %}
+                    <td>{{ claim.id  }}</td>
+                {% endif %}
+                <td >{{ claim.vehicle }}</td>
+                <td >{{ claim.claimDate }}</td>
+                <td >{{ claim.operatingTime }}</td>
+                <td class="malfunctionNodeRow"><a href='#' onclick="on('{{ claim.malfunctionNode }}', 'malfunction_overview', 'Узел отказа')">{{ claim.malfunctionNode }}</a></td>
+                <td >{{ claim.malfunctionDescription }}</td>
+                <td class="reparingMethodRow"><a href='#' onclick="on('{{ claim.reparingMethod }}', 'repairing_method', 'Способ восстановления')">{{ claim.reparingMethod }}</a></td>
+                <td >{{ claim.usedSpareParts }}</td>
+                <td>{{ claim.repairingDate }}</td>
+                <td >{{ claim.vehicleDowntime }}</td>
+                <td class="serviceCompanyRow"><a href='#' onclick="on('{{ claim.serviceCompany }}', 'service_company', 'Сервисная компания')">{{ claim.serviceCompany }}</a></td>
+
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <h2>No claims</h2>
+    {% endif %}
+    </div>
+{% else %}
+<h2>Пожалуйста авторизируйтесь, чтобы получить доступ к данной информации</h2>
+{% endif %}
+
+    <script src="{% static 'js/claim.js' %}"></script>
+
+{% endblock mainPage %}
+
+
+{% block pagination %}
+
+{# Добавляем пагинацию на страницу #}
+<div class="paginator" style="text-align: center;">Page:
+    {# Добавляем "<" #}
+    {% if page.has_previous %}
+       <a href="?page={{ page.previous_page_number }}"><</a>
+    {% endif %}
+
+    {# Информация о предыдущих страницах #}
+    {% if page.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page.number }}
+
+    {# Информация о следующих страницах #}
+    {% if page.has_next or page.next_page_number == page.paginator.num_pages %}
+        {% if page.next_page_number != page.paginator.num_pages %}
+            <a href="?page={{ page.next_page_number }}">{{ page.next_page_number }}</a>
+        {% endif %}
+        {% if paginator.num_pages != page.next_page_number %}
+           ...
+           <a href="?page={{ page.paginator.num_pages }}">{{ page.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+    {# Добавляем ">" #}
+    {% if page.has_next %}
+       <a href="?page={{ page.next_page_number }}">></a>
+    {% endif %}
+</div>
+{% endblock pagination %}

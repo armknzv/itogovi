@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/img/Logotype RGB 1.jpg' %}" >
+    <link rel="stylesheet" href="{% static 'css/default.css' %}">
+    {% block indexHead %}{% endblock indexHead %}
+ </head>
+
+  <header>
+    <div>
+        <img class="logo" src="{% static 'assets/img/photo.svg' %}"  alt="indexLogo" />
+    </div>
+
+    <div class="headerInfo">
+        <div >
+            +7-8352-20-12-09, telegram
+        </div>
+        <div class="headerInfoText">
+            Электронная сервисная книжка "Мой Силант"
+        </div>
+    </div>
+
+    {% if not request.user.is_authenticated %}
+    <a href="{% url 'login' %}" ><button class="headerAuthorizationButton">Log In</button></a>
+    {% else %}
+    <a href="{% url 'logout' %}" ><button class="headerAuthorizationButton">Log Out</button></a>
+    {% endif %}
+  </header>
+
+  <body>
+    {% block user %}{% endblock user %}
+    {% block filter %}{% endblock filter %}
+    {% block index %}{% endblock index %}
+    {% block mainPage %}{% endblock mainPage %}
+    {% block pagination %}{% endblock pagination %}
+  </body>
+
+  <footer>
+    <div>
+        +7-8352-20-12-09, telegram
+    </div>
+    <div>
+        "Мой Силант" 2022
+    </div>
+  </footer>
+
+</html>

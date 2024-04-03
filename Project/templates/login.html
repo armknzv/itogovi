@@ -1,0 +1,24 @@
+{% extends 'App/default.html' %}
+
+{% load static %}
+
+
+
+{% block user %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% csrf_token %}
+        <p>
+            {{ form.username.label_tag }} {{ form.username }}
+        </p>
+        <br>
+        <p>
+            {{ form.password.label_tag }} {{ form.password }}
+        </p>
+        <br>
+        <input type="submit" value="login">
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+ {% endblock user %}
